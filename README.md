@@ -66,4 +66,4 @@ This uses the official `@x402/express` middleware. The middleware intercepts req
 
 - [x402 Protocol](https://github.com/coinbase/x402)
 - [x402 Documentation](https://x402.org)
-- [Satoshi Facilitator](https://x402-facilitator.happysmoke-e4fd0a77.eastus.azurecontainerapps.io)
+- [Satoshi Facilitator](https://facilitator.bitcoinsapi.com)

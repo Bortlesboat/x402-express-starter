@@ -7,7 +7,7 @@ import { HTTPFacilitatorClient } from "@x402/core/server";
 const app = express();
 
 const {
-  FACILITATOR_URL = "https://x402-facilitator.happysmoke-e4fd0a77.eastus.azurecontainerapps.io",
+  FACILITATOR_URL = "https://facilitator.bitcoinsapi.com",
   PAY_TO = "0xe166267c3648b5ca4419f2c58faed8cd4df87d54",
   PRICE = "$0.001",
   NETWORK = "eip155:8453",

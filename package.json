@@ -1,12 +1,13 @@
 {
   "name": "x402-express-starter",
   "version": "1.0.0",
-  "description": "Minimal Express.js starter template with x402 payments via the Satoshi Facilitator",
+  "description": "Minimal Express.js starter template with configurable x402 payments",
   "main": "server.js",
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "test": "node --test"
   },
   "dependencies": {
     "@x402/core": "^2.9.0",

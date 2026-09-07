@@ -1,14 +1,18 @@
 # x402 Express Starter
 
-Minimal Express.js server with [x402](https://github.com/coinbase/x402) payments using the Satoshi Facilitator.
+Minimal Express.js server with [x402](https://github.com/coinbase/x402) payments through your configured facilitator.
 
-One free endpoint, one paid endpoint. Under 50 lines of code.
+One free endpoint, one paid endpoint.
 
 ## Setup
 
+`FACILITATOR_URL` and `PAY_TO` are required. Set an operating x402 facilitator that supports your chosen network and your own receiving wallet. Missing, empty, or whitespace-only values stop startup with a named configuration error. Surrounding whitespace is trimmed.
+
+The previously advertised Satoshi Facilitator is paused. These templates no longer default to it or to an example recipient.
+
 ```bash
 npm install
-cp .env.example .env   # edit .env to set your own PAY_TO address
+cp .env.example .env   # edit both FACILITATOR_URL and PAY_TO
 npm start
 ```
 
@@ -28,23 +32,17 @@ curl http://localhost:3000/api/hello
 # {"message":"Hello from x402!"}
 ```
 
-**Paid endpoint (no payment — returns 402):**
+**Paid endpoint (no payment â€” returns 402):**
 
 ```bash
 curl -i http://localhost:3000/api/premium
 # HTTP/1.1 402 Payment Required
-# Body contains payment requirements (facilitator URL, price, network)
+# PAYMENT-REQUIRED header contains base64-encoded payment requirements
 ```
 
 **Paid endpoint (with payment):**
 
-The x402 flow works like this:
-1. Client hits the paid endpoint and gets a 402 response with payment instructions
-2. Client sends payment to the facilitator
-3. Client retries the request with the payment proof header
-4. Server verifies payment via the facilitator and serves the content
-
-Any x402-compatible client (like `@x402/client`) handles this automatically.
+An x402 v2 client reads the `PAYMENT-REQUIRED` header, signs a payment authorization, and retries with `PAYMENT-SIGNATURE`. The middleware verifies and settles through the configured facilitator before returning a successful paid response. Use an official x402 client to handle this flow.
 
 ## Configuration
 
@@ -52,8 +50,8 @@ All config is in `.env` (see `.env.example`):
 
 | Variable | Default | Description |
 |---|---|---|
-| `FACILITATOR_URL` | Satoshi Facilitator | x402 facilitator that verifies payments |
-| `PAY_TO` | — | Your wallet address (receives USDC on Base) |
+| `FACILITATOR_URL` | Required, no default | Operating x402 facilitator endpoint |
+| `PAY_TO` | Required, no default | Your receiving wallet address |
 | `PRICE` | `$0.001` | Price per request in USD |
 | `NETWORK` | `eip155:8453` | Base mainnet |
 | `PORT` | `3000` | Server port |
@@ -62,8 +60,16 @@ All config is in `.env` (see `.env.example`):
 
 This uses the official `@x402/express` middleware. The middleware intercepts requests to protected routes, returns a 402 with payment requirements if no valid payment header is present, and verifies payments through the configured facilitator before allowing access.
 
+## Tests
+
+The tests use a local facilitator fixture and a dummy recipient. They verify configuration errors, the free 200 response, and an unpaid 402 response containing the configured recipient, amount, and network. They do not sign, verify, or settle a payment.
+
+```bash
+npm test
+```
+
 ## Links
 
 - [x402 Protocol](https://github.com/coinbase/x402)
 - [x402 Documentation](https://x402.org)
-- [Satoshi Facilitator](https://facilitator.bitcoinsapi.com)
+- [Satoshi Facilitator source (hosted service paused)](https://github.com/Bortlesboat/x402-facilitator)

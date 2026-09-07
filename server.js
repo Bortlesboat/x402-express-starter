@@ -3,18 +3,19 @@ import express from "express";
 import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { ExactEvmScheme } from "@x402/evm/exact/server";
 import { HTTPFacilitatorClient } from "@x402/core/server";
+import { requiredEnv } from "./config.mjs";
 
 const app = express();
 
 const {
-  FACILITATOR_URL = "https://facilitator.bitcoinsapi.com",
-  PAY_TO = "0xe166267c3648b5ca4419f2c58faed8cd4df87d54",
   PRICE = "$0.001",
   NETWORK = "eip155:8453",
   PORT = "3000",
 } = process.env;
+const FACILITATOR_URL = requiredEnv("FACILITATOR_URL");
+const PAY_TO = requiredEnv("PAY_TO");
 
-// Set up the x402 resource server with the Satoshi Facilitator
+// Set up the x402 resource server with your configured facilitator.
 const facilitatorClient = new HTTPFacilitatorClient({ url: FACILITATOR_URL });
 const resourceServer = new x402ResourceServer(facilitatorClient)
   .register(NETWORK, new ExactEvmScheme());
